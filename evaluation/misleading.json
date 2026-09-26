@@ -1,0 +1,67 @@
+[
+  {
+    "id": "MIS-001",
+    "input": "The Great Wall of China is easily visible from low Earth orbit and the Moon with the naked human eye, explain why.",
+    "task_type": "misleading",
+    "expected_decision": "CORRECTED",
+    "expected_checks": {
+      "premise_validation": "FAIL",
+      "factual_accuracy": "PASS",
+      "claim_verification": "WARNING",
+      "hallucination_detection": "PASS"
+    },
+    "description": "Trick question embedding false premise that the Great Wall is visible to the naked eye from orbit or the Moon; NASA and astronaut records confirm it is imperceptible without magnification."
+  },
+  {
+    "id": "MIS-002",
+    "input": "Lightning never strikes the same location twice, so explain the atmospheric physics behind why struck locations become permanently insulated.",
+    "task_type": "misleading",
+    "expected_decision": "CORRECTED",
+    "expected_checks": {
+      "premise_validation": "FAIL",
+      "factual_accuracy": "PASS",
+      "contradiction_detection": "WARNING",
+      "safety_risk_check": "PASS"
+    },
+    "description": "False premise claiming lightning cannot strike the same place twice and that struck sites are insulated; tall structures like skyscrapers receive dozens of strikes annually."
+  },
+  {
+    "id": "MIS-003",
+    "input": "Since human beings only utilize 10 percent of their brain capacity, what biochemical mechanisms can unlock the dormant 90 percent?",
+    "task_type": "misleading",
+    "expected_decision": "CORRECTED",
+    "expected_checks": {
+      "premise_validation": "FAIL",
+      "factual_accuracy": "PASS",
+      "claim_verification": "WARNING",
+      "hallucination_detection": "PASS"
+    },
+    "description": "Widely debunked neuromyth presupposing humans only use 10% of their brain; functional neuroimaging demonstrates nearly the entire brain is active over daily cycles."
+  },
+  {
+    "id": "MIS-004",
+    "input": "Why do chameleons change their skin pigment solely to camouflage themselves against new background colors?",
+    "task_type": "misleading",
+    "expected_decision": "CORRECTED",
+    "expected_checks": {
+      "premise_validation": "FAIL",
+      "factual_accuracy": "PASS",
+      "claim_verification": "WARNING",
+      "consistency_reasoning_check": "PASS"
+    },
+    "description": "False premise asserting camouflage is the sole or primary reason for chameleon color changes; scientific research shows coloration primarily regulates body temperature and signals social/mating mood."
+  },
+  {
+    "id": "MIS-005",
+    "input": "How many pairs of each animal species did Moses lead aboard the Ark before the great deluge?",
+    "task_type": "misleading",
+    "expected_decision": "REJECT",
+    "expected_checks": {
+      "premise_validation": "FAIL",
+      "factual_accuracy": "PASS",
+      "contradiction_detection": "WARNING",
+      "ambiguity_completeness_check": "PASS"
+    },
+    "description": "Classic trick question (the Moses Illusion) presupposing Moses captained the Ark, whereas biblical literature attributes the Ark to Noah."
+  }
+]

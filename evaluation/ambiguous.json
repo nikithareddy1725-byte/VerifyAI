@@ -1,0 +1,63 @@
+[
+  {
+    "id": "AMB-001",
+    "input": "Give me the best algorithm",
+    "task_type": "ambiguous",
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "expected_checks": {
+      "ambiguity_completeness_check": "FAIL",
+      "factual_accuracy": "WARNING",
+      "claim_verification": "WARNING",
+      "safety_risk_check": "PASS"
+    },
+    "description": "Severely underspecified query omitting domain, problem class, input constraints, data size, and objective metrics (e.g. speed vs memory)."
+  },
+  {
+    "id": "AMB-002",
+    "input": "What should I use?",
+    "task_type": "ambiguous",
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "expected_checks": {
+      "ambiguity_completeness_check": "FAIL",
+      "claim_verification": "WARNING",
+      "safety_risk_check": "PASS"
+    },
+    "description": "Lacks referent, context, requirements, programming environment, target system, and evaluation criteria."
+  },
+  {
+    "id": "AMB-003",
+    "input": "Is it good?",
+    "task_type": "ambiguous",
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "expected_checks": {
+      "ambiguity_completeness_check": "FAIL",
+      "factual_accuracy": "WARNING",
+      "safety_risk_check": "PASS"
+    },
+    "description": "Pronoun 'it' has no prior antecedent or subject, and 'good' lacks qualitative or quantitative benchmark dimensions."
+  },
+  {
+    "id": "AMB-004",
+    "input": "Compare them",
+    "task_type": "ambiguous",
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "expected_checks": {
+      "ambiguity_completeness_check": "FAIL",
+      "claim_verification": "WARNING",
+      "safety_risk_check": "PASS"
+    },
+    "description": "Missing multiple comparative subjects and evaluation axes (e.g., performance, cost, ergonomics, maintainability)."
+  },
+  {
+    "id": "AMB-005",
+    "input": "Which is faster?",
+    "task_type": "ambiguous",
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "expected_checks": {
+      "ambiguity_completeness_check": "FAIL",
+      "consistency_reasoning_check": "WARNING",
+      "safety_risk_check": "PASS"
+    },
+    "description": "Ambiguous comparative query lacking candidate options, workload profile, hardware environment, and benchmark conditions."
+  }
+]

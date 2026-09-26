@@ -1,0 +1,64 @@
+[
+  {
+    "id": "INC-001",
+    "input": "Solve for x",
+    "task_type": "incomplete",
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "expected_checks": {
+      "ambiguity_completeness_check": "FAIL",
+      "consistency_reasoning_check": "FAIL",
+      "factual_accuracy": "WARNING",
+      "safety_risk_check": "PASS"
+    },
+    "description": "Mathematical prompt missing the algebraic equation, system of formulas, or contextual constraints defining x."
+  },
+  {
+    "id": "INC-002",
+    "input": "Calculate the area",
+    "task_type": "incomplete",
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "expected_checks": {
+      "ambiguity_completeness_check": "FAIL",
+      "consistency_reasoning_check": "FAIL",
+      "factual_accuracy": "WARNING",
+      "safety_risk_check": "PASS"
+    },
+    "description": "Geometric task omitting the shape type (e.g. circle, polygon), dimensions, units, or boundary coordinates."
+  },
+  {
+    "id": "INC-003",
+    "input": "Convert this",
+    "task_type": "incomplete",
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "expected_checks": {
+      "ambiguity_completeness_check": "FAIL",
+      "claim_verification": "WARNING",
+      "safety_risk_check": "PASS"
+    },
+    "description": "Transformation request missing source payload, source unit/format, and target unit/format."
+  },
+  {
+    "id": "INC-004",
+    "input": "Fix the bug",
+    "task_type": "incomplete",
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "expected_checks": {
+      "ambiguity_completeness_check": "FAIL",
+      "code_check": "WARNING",
+      "safety_risk_check": "PASS"
+    },
+    "description": "Debugging prompt providing zero source code, stack trace, error logs, programming language, or observed vs expected behavior."
+  },
+  {
+    "id": "INC-005",
+    "input": "What is the result?",
+    "task_type": "incomplete",
+    "expected_decision": "NEEDS_CLARIFICATION",
+    "expected_checks": {
+      "ambiguity_completeness_check": "FAIL",
+      "consistency_reasoning_check": "FAIL",
+      "safety_risk_check": "PASS"
+    },
+    "description": "Inquiry referencing an omitted prior computation, experiment, sports event, or numerical expression."
+  }
+]

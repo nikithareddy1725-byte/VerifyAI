@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>VerifyAI - Agent Deep Dive & Architecture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=16.0">
+    <script>
+        (function() {
+            var theme = localStorage.getItem('verifyai_theme');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+                window.addEventListener('DOMContentLoaded', function() {
+                    document.body.classList.add('dark-mode');
+                    var icon = document.getElementById('themeToggleIcon');
+                    var text = document.getElementById('themeToggleText');
+                    if (icon) icon.textContent = '☀️';
+                    if (text) text.textContent = 'Light Mode';
+                });
+            }
+        })();
+    </script>
+    <style>
+        /* Specific Styles for Agent Detail Page */
+        .agent-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 28px 32px;
+            color: white;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-hero::after {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .agent-hero-main {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .agent-hero-icon {
+            font-size: 48px;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+            flex-shrink: 0;
+        }
+
+        .agent-hero-text h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .agent-hero-text p {
+            color: #c7d2fe;
+            font-size: 14px;
+            line-height: 1.5;
+            max-width: 650px;
+        }
+
+        .agent-identifier {
+            display: inline-block;
+            font-family: monospace;
+            font-size: 12px;
+            background: rgba(0,0,0,0.3);
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #a5b4fc;
+            margin-top: 6px;
+        }
+
+        .agent-meta-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+
+        .meta-pill {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-pill.operational {
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        /* 12 AGENTS SELECTOR BAR */
+        .agent-selector-bar {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 4px 2px 16px 2px;
+            margin-bottom: 24px;
+            scrollbar-width: thin;
+        }
+
+        .agent-selector-btn {
+            background: #ffffff;
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #0284c7;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(2, 132, 199, 0.05);
+            flex-shrink: 0;
+            font-family: inherit;
+        }
+
+        .agent-selector-btn:hover {
+            border-color: #6366f1;
+            color: #6366f1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+        }
+
+        .agent-selector-btn.active {
+            background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+            color: white;
+            border-color: #7c3aed;
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+        }
+
+        /* TABS SYSTEM */
+        .detail-tabs {
+            display: flex;
+            gap: 6px;
+            border-bottom: 2px solid #bae6fd;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 12px 22px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0284c7;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover {
+            color: #6366f1;
+        }
+
+        .tab-btn.active {
+            color: #7c3aed;
+        }
+
+        .tab-btn.active::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #7c3aed);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* CONTENT CARDS */
+        .specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .specs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .spec-box {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #bae6fd;
+            padding: 24px;
+            box-shadow: 0 4px 16px -2px rgba(2, 132, 199, 0.07);
+        }
+
+        .spec-box h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .code-container {
+            position: relative;
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 16px;
+            color: #e2e8f0;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            font-size: 12.5px;
+            line-height: 1.6;
+            overflow-x: auto;
+            max-height: 380px;
+            margin-top: 10px;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #f8fafc;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* WORKFLOW STEPS */
+        .workflow-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .workflow-step {
+            display: flex;
+            gap: 16px;
+            background: #ffffff;
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 14px 18px;
+            align-items: flex-start;
+            box-shadow: 0 1px 3px rgba(2, 132, 199, 0.04);
+        }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .step-text strong {
+            display: block;
+            font-size: 14px;
+            color: #0f172a;
+            margin-bottom: 3px;
+        }
+
+        .step-text p {
+            font-size: 13px;
+            color: #0284c7;
+            line-height: 1.4;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* TOOLS LIST */
+        .tools-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .tool-card {
+            background: #ffffff;
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(2, 132, 199, 0.04);
+        }
+
+        .tool-icon {
+            font-size: 24px;
+            width: 44px;
+            height: 44px;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .tool-info strong {
+            display: block;
+            font-size: 14px;
+            color: #0f172a;
+        }
+
+        .tool-info span {
+            font-size: 12px;
+            color: #0284c7;
+            font-weight: 500;
+        }
+
+        /* SIMULATOR */
+        .sim-box {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #bae6fd;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px -2px rgba(2, 132, 199, 0.07);
+        }
+
+        .sim-input-row {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .sim-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px 16px;
+            border: 1.5px solid #bae6fd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #ffffff;
+            color: #0f172a;
+        }
+
+        .sim-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .sim-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .sim-run-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+            font-family: inherit;
+        }
+
+        .sim-run-btn:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #6d28d9 100%);
+            box-shadow: 0 6px 18px rgba(124, 58, 237, 0.35);
+        }
+
+        .sim-run-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .sample-chips {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .sample-chip {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            color: #0284c7;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-family: inherit;
+        }
+
+        .sample-chip:hover {
+            background: #e0f2fe;
+            color: #0369a1;
+            border-color: #7dd3fc;
+        }
+
+        /* BOTTOM NAV */
+        .bottom-nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #bae6fd;
+        }
+
+        .btn-nav-agent {
+            background: #ffffff;
+            border: 1px solid #bae6fd;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0284c7;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-family: inherit;
+        }
+
+        .btn-nav-agent:hover {
+            border-color: #6366f1;
+            color: #6366f1;
+            background: #f0f9ff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">✓</div>
+            <div>
+                <h2>VerifyAI</h2>
+                <span>Trust Engine</span>
+            </div>
+        </div>
+
+        <nav>
+            <a href="index.html#dashboard" class="nav-item" style="text-decoration: none;">
+                <span>⌂</span> Dashboard
+            </a>
+            <a href="index.html#agents" class="nav-item active" style="text-decoration: none;">
+                <span>◈</span> Agents Directory (12)
+            </a>
+            <a href="index.html#evidence" class="nav-item" style="text-decoration: none;">
+                <span>◉</span> Evidence Grounding
+            </a>
+            <a href="index.html#verification" class="nav-item" style="text-decoration: none;">
+                <span>✓</span> Verification & Passport
+            </a>
+            <a href="index.html#audit" class="nav-item" style="text-decoration: none;">
+                <span>▤</span> Audit Log
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                Backend Online (8000)
+            </div>
+            <p>VerifyAI Engine v2.0</p>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <a href="index.html#agents" class="btn-nav-agent" style="padding: 6px 14px; font-size: 13px;">
+                    &larr; Back to All Agents
+                </a>
+                <div>
+                    <h1 id="topbarAgentName" style="font-size: 22px; font-weight: 700; color: #0f172a;">Planner Agent</h1>
+                    <p id="topbarAgentSubtitle" style="font-size: 12px; color: #64748b;">Multi-Agent Orchestration Profile & Architecture</p>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+                    <span id="themeToggleIcon">🌙</span>
+                    <span id="themeToggleText">Dark Mode</span>
+                </button>
+                <a href="index.html" class="small-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #4f46e5; color: white; border-radius: 6px; font-size: 13px; font-weight: 600;">
+                    ⌂ Open Main Engine
+                </a>
+                <span class="live-status">
+                    <span></span> Live Engine
+                </span>
+                <div class="profile">
+                    <div class="avatar">V</div>
+                    <span>Architect</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 12 AGENTS HORIZONTAL SELECTOR BAR -->
+        <div class="agent-selector-bar" id="agentSelectorBar">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- AGENT HERO CARD -->
+        <div class="agent-hero">
+            <div class="agent-hero-main">
+                <div class="agent-hero-icon" id="heroIcon">🧠</div>
+                <div class="agent-hero-text">
+                    <h1 id="heroName">
+                        Planner Agent
+                        <span id="heroTag" class="tag blue-tag">Planning</span>
+                    </h1>
+                    <p id="heroMission">Decomposes complex user goals into atomic steps, evaluates task complexity, and defines required verification profiles.</p>
+                    <span class="agent-identifier" id="heroIdentifier">verifyai.agents.planner.PlannerAgent</span>
+                </div>
+            </div>
+
+            <div class="agent-meta-badges">
+                <span class="meta-pill operational">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+                    <span id="heroStatus">Operational</span>
+                </span>
+                <span class="meta-pill">
+                    <span>⏱ Benchmark:</span>
+                    <strong id="heroLatency">42ms</strong>
+                </span>
+                <span class="meta-pill">
+                    <span>🔄 Stage:</span>
+                    <strong id="heroStage">Stage 1 of 12</strong>
+                </span>
+            </div>
+        </div>
+
+        <!-- NAVIGATION TABS -->
+        <div class="detail-tabs">
+            <button class="tab-btn active" onclick="switchTab('architecture')">Architecture & System Prompt</button>
+            <button class="tab-btn" onclick="switchTab('schemas')">Input & Output Contracts</button>
+            <button class="tab-btn" onclick="switchTab('tools')">Tools & Guardrails</button>
+            <button class="tab-btn" onclick="switchTab('simulator')">Interactive Agent Simulator</button>
+        </div>
+
+        <!-- TAB 1: ARCHITECTURE & SYSTEM PROMPT -->
+        <div id="tab-architecture" class="tab-content active">
+            <div class="specs-grid">
+                <!-- System Prompt & Instructions -->
+                <div class="spec-box">
+                    <h3><span>📜</span> System Prompt & Behavioral Directives</h3>
+                    <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">The exact directive provided to the underlying reasoning engine during this execution phase:</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode('systemPromptCode')">Copy</button>
+                        <pre id="systemPromptCode">Loading system prompt...</pre>
+                    </div>
+                </div>
+
+                <!-- Execution Logic & Flow -->
+                <div class="spec-box">
+                    <h3><span>⚙️</span> Algorithmic Decision Tree</h3>
+                    <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">Step-by-step internal execution lifecycle for this micro-agent:</p>
+                    <div class="workflow-timeline" id="workflowTimeline">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Dive Rationale -->
+            <div class="spec-box">
+                <h3><span>🛡️</span> Why Generation != Verification in this Agent</h3>
+                <div id="deepDiveText" style="font-size: 13.5px; color: #334155; line-height: 1.6;">
+                    Loading architectural rationale...
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: INPUT & OUTPUT CONTRACTS -->
+        <div id="tab-schemas" class="tab-content">
+            <div class="specs-grid">
+                <!-- Input Contract -->
+                <div class="spec-box">
+                    <h3><span>📥</span> Input Data Contract (Pydantic / JSON)</h3>
+                    <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">Payload structure consumed by this agent's <code style="color:#4f46e5;">execute()</code> method:</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode('inputSchemaCode')">Copy</button>
+                        <pre id="inputSchemaCode">Loading input schema...</pre>
+                    </div>
+                </div>
+
+                <!-- Output Contract -->
+                <div class="spec-box">
+                    <h3><span>📤</span> Output Data Contract (Pydantic / JSON)</h3>
+                    <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">Structured artifact emitted into the pipeline and logged to Supabase:</p>
+                    <div class="code-container">
+                        <button class="copy-btn" onclick="copyCode('outputSchemaCode')">Copy</button>
+                        <pre id="outputSchemaCode">Loading output schema...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: TOOLS & GUARDRAILS -->
+        <div id="tab-tools" class="tab-content">
+            <div class="specs-grid">
+                <!-- Connected Tools -->
+                <div class="spec-box">
+                    <h3><span>🧰</span> Associated Verification Checkers & Tools</h3>
+                    <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">Deterministic utilities and APIs invoked by this agent:</p>
+                    <div class="tools-list" id="toolsList">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Safety Guardrails -->
+                <div class="spec-box">
+                    <h3><span>🔒</span> Failsafe Guardrails & Recovery Rules</h3>
+                    <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">Deterministic constraints that enforce reliability and prevent hallucination:</p>
+                    <div class="workflow-timeline" id="guardrailsList">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: INTERACTIVE SIMULATOR -->
+        <div id="tab-simulator" class="tab-content">
+            <div class="sim-box">
+                <div style="margin-bottom: 16px;">
+                    <h3 style="font-size: 17px; color: #0f172a; margin-bottom: 4px;"><span>🧪</span> Interactive Micro-Agent Simulator</h3>
+                    <p style="font-size: 13px; color: #64748b;">Execute a real-time isolated simulation of this micro-agent to observe its exact input-output reasoning transformations.</p>
+                </div>
+
+                <div class="sim-input-row">
+                    <label style="font-size: 13px; font-weight: 600; color: #334155;">Test Input Prompt:</label>
+                    <textarea id="simInput" class="sim-input" placeholder="Type prompt to test this agent..."></textarea>
+                    
+                    <div class="sample-chips">
+                        <span style="font-size: 12px; color: #64748b; font-weight: 600;">Sample Tests:</span>
+                        <div id="sampleChipsContainer" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sim-actions">
+                    <button id="simRunBtn" class="sim-run-btn" onclick="runSimulation()">
+                        <span>▶</span> Execute Simulation
+                    </button>
+                    <span id="simStatus" style="font-size: 13px; color: #64748b; font-style: italic;">Ready for execution</span>
+                </div>
+
+                <!-- Live Simulation Output Trace -->
+                <div style="margin-top: 20px;">
+                    <h4 style="font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Execution Result & Output Artifact:</h4>
+                    <div class="code-container" style="max-height: 420px;">
+                        <button class="copy-btn" onclick="copyCode('simOutputCode')">Copy JSON</button>
+                        <pre id="simOutputCode">// Press "Execute Simulation" above to run this micro-agent...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM PREV/NEXT NAV -->
+        <div class="bottom-nav-bar">
+            <button id="btnPrevAgent" class="btn-nav-agent" onclick="navigatePrev()">
+                &larr; Previous Agent
+            </button>
+            <span style="font-size: 13px; color: #94a3b8; font-weight: 500;">VerifyAI Multi-Agent Pipeline</span>
+            <button id="btnNextAgent" class="btn-nav-agent" onclick="navigateNext()">
+                Next Agent &rarr;
+            </button>
+        </div>
+
+    </main>
+
+    <div id="toast" class="toast">Action completed</div>
+
+    <!-- LOAD COMPREHENSIVE AGENTS DATA & CONTROLLER -->
+    <script src="agent-data.js?v=11.0"></script>
+    <script>
+        // Tab Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            const targetBtn = document.querySelector(`.tab-btn[onclick="switchTab('${tabId}')"]`);
+            const targetContent = document.getElementById(`tab-${tabId}`);
+            if (targetBtn) targetBtn.classList.add('active');
+            if (targetContent) targetContent.classList.add('active');
+        }
+
+        // Copy Code Utility
+        function copyCode(elemId) {
+            const elem = document.getElementById(elemId);
+            if (!elem) return;
+            navigator.clipboard.writeText(elem.textContent).then(() => {
+                showToast("Copied to clipboard!");
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            if (!toast) return;
+            toast.textContent = msg;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 2800);
+        }
+
+        // Theme Toggle Functionality
+        function initTheme() {
+            const savedTheme = localStorage.getItem('verifyai_theme') || 'light';
+            applyTheme(savedTheme);
+        }
+
+        function applyTheme(theme) {
+            const icon = document.getElementById('themeToggleIcon');
+            const text = document.getElementById('themeToggleText');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.documentElement.classList.add('dark-mode');
+                if (icon) icon.textContent = '☀️';
+                if (text) text.textContent = 'Light Mode';
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.documentElement.classList.remove('dark-mode');
+                if (icon) icon.textContent = '🌙';
+                if (text) text.textContent = 'Dark Mode';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark-mode');
+            const newTheme = isDark ? 'light' : 'dark';
+            localStorage.setItem('verifyai_theme', newTheme);
+            applyTheme(newTheme);
+            showToast(`Switched to ${newTheme === 'dark' ? 'Dark' : 'Light'} Mode`);
+        }
+
+        document.addEventListener('DOMContentLoaded', initTheme);
+    </script>
+</body>
+</html>

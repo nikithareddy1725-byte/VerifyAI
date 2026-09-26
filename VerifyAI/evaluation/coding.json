@@ -1,0 +1,67 @@
+[
+  {
+    "id": "CODE-001",
+    "input": "Write a Python function `factorial(n: int) -> int` that computes the factorial of non-negative integers, raises ValueError for negative inputs, and handles 0! = 1.",
+    "task_type": "coding",
+    "expected_decision": "ACCEPT",
+    "expected_checks": {
+      "code_check": "PASS",
+      "factual_accuracy": "PASS",
+      "safety_risk_check": "PASS",
+      "consistency_reasoning_check": "PASS"
+    },
+    "description": "Standard mathematical algorithm test verifying syntax correctness, input validation, recursion or iterative termination, and test assertion execution."
+  },
+  {
+    "id": "CODE-002",
+    "input": "Write a Python function `sort_list(arr: list[int]) -> list[int]` that implements quicksort or mergesort without using built-in `.sort()` or `sorted()`, returning a new sorted list.",
+    "task_type": "coding",
+    "expected_decision": "ACCEPT",
+    "expected_checks": {
+      "code_check": "PASS",
+      "factual_accuracy": "PASS",
+      "safety_risk_check": "PASS",
+      "consistency_reasoning_check": "PASS"
+    },
+    "description": "Sorting algorithm implementation requiring valid algorithmic partitioning, array boundary checks, and functional immutability."
+  },
+  {
+    "id": "CODE-003",
+    "input": "Write a Python function `find_max(numbers: list[float]) -> float` that finds the maximum element in a non-empty sequence without calling `max()`, raising ValueError if empty.",
+    "task_type": "coding",
+    "expected_decision": "ACCEPT",
+    "expected_checks": {
+      "code_check": "PASS",
+      "factual_accuracy": "PASS",
+      "safety_risk_check": "PASS",
+      "consistency_reasoning_check": "PASS"
+    },
+    "description": "Linear scan search algorithm verifying initial accumulator state handling, negative float values, and empty array edge-case exceptions."
+  },
+  {
+    "id": "CODE-004",
+    "input": "Write a Python function `reverse_string(s: str) -> str` that reverses a string without using slicing syntax `[::-1]` or reversed(), preserving Unicode characters.",
+    "task_type": "coding",
+    "expected_decision": "ACCEPT",
+    "expected_checks": {
+      "code_check": "PASS",
+      "factual_accuracy": "PASS",
+      "safety_risk_check": "PASS",
+      "consistency_reasoning_check": "PASS"
+    },
+    "description": "String manipulation algorithm testing pointer iteration or character collection accumulation with preservation of full Unicode codepoints."
+  },
+  {
+    "id": "CODE-005",
+    "input": "Write a Python function `is_palindrome(text: str) -> bool` that checks if an alphanumeric string reads the same forwards and backwards, ignoring casing, spaces, and punctuation.",
+    "task_type": "coding",
+    "expected_decision": "ACCEPT",
+    "expected_checks": {
+      "code_check": "PASS",
+      "factual_accuracy": "PASS",
+      "safety_risk_check": "PASS",
+      "consistency_reasoning_check": "PASS"
+    },
+    "description": "Two-pointer string validation task testing normalization, regex filtering or `isalnum()` checks, and symmetric indexing."
+  }
+]

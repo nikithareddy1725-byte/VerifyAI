@@ -1,0 +1,67 @@
+[
+  {
+    "id": "CONF-001",
+    "input": "What was the official height of Mount Everest before the 2020 joint measurement by China and Nepal?",
+    "task_type": "conflicting",
+    "expected_decision": "WARNING",
+    "expected_checks": {
+      "contradiction_detection": "WARNING",
+      "claim_verification": "WARNING",
+      "factual_accuracy": "PASS",
+      "safety_risk_check": "PASS"
+    },
+    "description": "Historical dispute where Nepal officially measured 8,848 meters (including snow cap) while China officially recognized 8,844.43 meters (rock height only) until the 2020 consensus of 8,848.86 meters."
+  },
+  {
+    "id": "CONF-002",
+    "input": "Who is credited with inventing the telephone: Alexander Graham Bell, Antonio Meucci, or Elisha Gray?",
+    "task_type": "conflicting",
+    "expected_decision": "CORRECTED",
+    "expected_checks": {
+      "contradiction_detection": "WARNING",
+      "claim_verification": "WARNING",
+      "factual_accuracy": "PASS",
+      "premise_validation": "PASS"
+    },
+    "description": "Historically disputed attribution between Bell's 1876 patent, Gray's simultaneous caveat filing, and Meucci's 1871 caveat, requiring synthesis of legal patent rights versus technical precedence."
+  },
+  {
+    "id": "CONF-003",
+    "input": "Is Pluto classified as a planet according to contemporary astronomy?",
+    "task_type": "conflicting",
+    "expected_decision": "WARNING",
+    "expected_checks": {
+      "contradiction_detection": "WARNING",
+      "claim_verification": "PASS",
+      "factual_accuracy": "PASS",
+      "ambiguity_completeness_check": "PASS"
+    },
+    "description": "Nomenclature conflict between the 2006 International Astronomical Union (IAU) dynamical definition (dwarf planet) and geophysical planet definitions championed by planetary scientists."
+  },
+  {
+    "id": "CONF-004",
+    "input": "Does moderate daily coffee consumption raise or lower the long-term risk of cardiovascular disease?",
+    "task_type": "conflicting",
+    "expected_decision": "WARNING",
+    "expected_checks": {
+      "contradiction_detection": "WARNING",
+      "claim_verification": "WARNING",
+      "factual_accuracy": "PASS",
+      "consistency_reasoning_check": "PASS"
+    },
+    "description": "Epidemiological literature presents divergent evidence: older observational cohorts flagged tachycardia/blood pressure spikes, whereas modern prospective studies and Mendelian randomization show cardio-protective associations."
+  },
+  {
+    "id": "CONF-005",
+    "input": "Did William Shakespeare write all the theatrical plays published under his First Folio entirely alone?",
+    "task_type": "conflicting",
+    "expected_decision": "CORRECTED",
+    "expected_checks": {
+      "contradiction_detection": "WARNING",
+      "claim_verification": "WARNING",
+      "factual_accuracy": "PASS",
+      "premise_validation": "PASS"
+    },
+    "description": "Literary conflict between solitary romantic genius attribution and contemporary computational stylometrics proving substantial co-authorship with John Fletcher, Thomas Middleton, and George Peele."
+  }
+]

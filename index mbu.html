@@ -1,0 +1,592 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VerifyAI - Multi-Agent Verification Engine</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">✓</div>
+            <div>
+                <h2>VerifyAI</h2>
+                <span>Trust Engine</span>
+            </div>
+        </div>
+
+        <nav>
+            <button class="nav-item active" data-section="dashboard">
+                <span>⌂</span> Dashboard
+            </button>
+
+            <button class="nav-item" data-section="agents">
+                <span>◈</span> Agents
+            </button>
+
+            <button class="nav-item" data-section="evidence">
+                <span>◉</span> Evidence
+            </button>
+
+            <button class="nav-item" data-section="verification">
+                <span>✓</span> Verification
+            </button>
+
+            <button class="nav-item" data-section="audit">
+                <span>▤</span> Audit Log
+            </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                System Operational
+            </div>
+            <p>VerifyAI v1.0</p>
+        </div>
+    </aside>
+
+
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <h1 id="page-title">Verification Dashboard</h1>
+                <p>Multi-Agent AI Reasoning & Verification Engine</p>
+            </div>
+
+            <div class="header-right">
+                <span class="live-status">
+                    <span></span> Live
+                </span>
+
+                <div class="profile">
+                    <div class="avatar">N</div>
+                    <span>Admin</span>
+                </div>
+            </div>
+        </header>
+
+
+        <!-- DASHBOARD -->
+
+        <section id="dashboard" class="page-section active-section">
+
+            <div class="welcome">
+                <div>
+                    <h2>Verify before you trust.</h2>
+                    <p>
+                        Submit a task and let specialized AI agents research,
+                        generate, verify and audit the result.
+                    </p>
+                </div>
+
+                <div class="shield">🛡️</div>
+            </div>
+
+
+            <div class="task-card">
+
+                <div class="card-title">
+                    <div>
+                        <h3>New Verification Task</h3>
+                        <p>Enter a question, claim, code or complex task.</p>
+                    </div>
+
+                    <span class="secure">🔒 Secure</span>
+                </div>
+
+                <textarea
+                    id="taskInput"
+                    placeholder="Example: Verify whether the following claim is supported by reliable evidence..."
+                ></textarea>
+
+                <div class="task-options">
+
+                    <select id="taskType">
+                        <option value="general">General Reasoning</option>
+                        <option value="fact">Fact Verification</option>
+                        <option value="code">Code Verification</option>
+                        <option value="logic">Logical Reasoning</option>
+                        <option value="risk">Risk Analysis</option>
+                    </select>
+
+                    <button id="verifyBtn" class="primary-btn">
+                        <span>✓</span> Verify Task
+                    </button>
+
+                </div>
+            </div>
+
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-icon blue">⌁</div>
+                    <div>
+                        <span>Total Tasks</span>
+                        <strong id="totalTasks">128</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">✓</div>
+                    <div>
+                        <span>Verified</span>
+                        <strong id="verifiedTasks">104</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">↻</div>
+                    <div>
+                        <span>Corrected</span>
+                        <strong>17</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon red">!</div>
+                    <div>
+                        <span>Rejected</span>
+                        <strong>7</strong>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="content-grid">
+
+                <div class="card">
+
+                    <div class="section-header">
+                        <h3>Agent Pipeline</h3>
+                        <span class="running">● Running</span>
+                    </div>
+
+                    <div class="agent-list">
+
+                        <div class="agent">
+                            <div class="agent-icon">🧠</div>
+                            <div class="agent-info">
+                                <strong>Planner Agent</strong>
+                                <span>Task decomposition</span>
+                            </div>
+                            <span class="agent-status completed">Completed</span>
+                        </div>
+
+                        <div class="agent">
+                            <div class="agent-icon">🔎</div>
+                            <div class="agent-info">
+                                <strong>Research Agent</strong>
+                                <span>Evidence retrieval</span>
+                            </div>
+                            <span class="agent-status completed">Completed</span>
+                        </div>
+
+                        <div class="agent">
+                            <div class="agent-icon">✍️</div>
+                            <div class="agent-info">
+                                <strong>Generator Agent</strong>
+                                <span>Initial response</span>
+                            </div>
+                            <span class="agent-status completed">Completed</span>
+                        </div>
+
+                        <div class="agent">
+                            <div class="agent-icon">🛡️</div>
+                            <div class="agent-info">
+                                <strong>Verifier Agent</strong>
+                                <span>Independent verification</span>
+                            </div>
+                            <span class="agent-status verified">Verified</span>
+                        </div>
+
+                        <div class="agent">
+                            <div class="agent-icon">⚠️</div>
+                            <div class="agent-info">
+                                <strong>Critic Agent</strong>
+                                <span>Contradiction detection</span>
+                            </div>
+                            <span class="agent-status verified">Verified</span>
+                        </div>
+
+                        <div class="agent">
+                            <div class="agent-icon">✓</div>
+                            <div class="agent-info">
+                                <strong>Finalizer Agent</strong>
+                                <span>Final decision</span>
+                            </div>
+                            <span class="agent-status waiting">Ready</span>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="card">
+
+                    <div class="section-header">
+                        <h3>Verification Score</h3>
+                        <span class="score-label">High Confidence</span>
+                    </div>
+
+                    <div class="score-circle">
+                        <div>
+                            <strong id="score">93</strong>
+                            <span>%</span>
+                        </div>
+                    </div>
+
+                    <div class="score-details">
+
+                        <div>
+                            <span>Evidence Support</span>
+                            <strong>94%</strong>
+                        </div>
+
+                        <div>
+                            <span>Logical Consistency</span>
+                            <strong>91%</strong>
+                        </div>
+
+                        <div>
+                            <span>Source Reliability</span>
+                            <strong>95%</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- AGENTS -->
+
+        <section id="agents" class="page-section">
+
+            <div class="section-intro">
+                <h2>Agent Orchestration</h2>
+                <p>Monitor specialized agents and their responsibilities.</p>
+            </div>
+
+            <div class="agent-cards">
+
+                <div class="large-agent-card">
+                    <div class="large-agent-icon">🧠</div>
+                    <h3>Planner Agent</h3>
+                    <p>Breaks complex tasks into smaller executable steps.</p>
+                    <span class="tag blue-tag">Planning</span>
+                </div>
+
+                <div class="large-agent-card">
+                    <div class="large-agent-icon">🔎</div>
+                    <h3>Research Agent</h3>
+                    <p>Retrieves relevant evidence and supporting information.</p>
+                    <span class="tag green-tag">Research</span>
+                </div>
+
+                <div class="large-agent-card">
+                    <div class="large-agent-icon">✍️</div>
+                    <h3>Generator Agent</h3>
+                    <p>Generates an initial solution based on available evidence.</p>
+                    <span class="tag purple-tag">Generation</span>
+                </div>
+
+                <div class="large-agent-card">
+                    <div class="large-agent-icon">🛡️</div>
+                    <h3>Verifier Agent</h3>
+                    <p>Independently validates important claims and outputs.</p>
+                    <span class="tag orange-tag">Verification</span>
+                </div>
+
+                <div class="large-agent-card">
+                    <div class="large-agent-icon">⚠️</div>
+                    <h3>Critic Agent</h3>
+                    <p>Detects contradictions, unsupported claims and risks.</p>
+                    <span class="tag red-tag">Criticism</span>
+                </div>
+
+                <div class="large-agent-card">
+                    <div class="large-agent-icon">✓</div>
+                    <h3>Finalizer Agent</h3>
+                    <p>Accepts, corrects or rejects the final result.</p>
+                    <span class="tag green-tag">Decision</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- EVIDENCE -->
+
+        <section id="evidence" class="page-section">
+
+            <div class="section-intro">
+                <h2>Evidence Grounding</h2>
+                <p>Supporting evidence connected to important claims.</p>
+            </div>
+
+            <div class="evidence-list">
+
+                <div class="evidence-card">
+                    <div class="evidence-number">01</div>
+
+                    <div class="evidence-content">
+                        <h3>Claim: AI output is supported by available evidence</h3>
+
+                        <p>
+                            Evidence retrieved from trusted documentation
+                            and structured sources.
+                        </p>
+
+                        <div class="evidence-meta">
+                            <span>Source Reliability: 95%</span>
+                            <span>Support: 94%</span>
+                            <span class="verified-badge">✓ Supported</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="evidence-card">
+                    <div class="evidence-number">02</div>
+
+                    <div class="evidence-content">
+                        <h3>Claim: Generated reasoning is logically consistent</h3>
+
+                        <p>
+                            Independent verification path confirms the
+                            reasoning chain.
+                        </p>
+
+                        <div class="evidence-meta">
+                            <span>Logic Score: 91%</span>
+                            <span>Verification: Passed</span>
+                            <span class="verified-badge">✓ Verified</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="evidence-card warning-card">
+
+                    <div class="evidence-number">03</div>
+
+                    <div class="evidence-content">
+                        <h3>Potential conflicting evidence detected</h3>
+
+                        <p>
+                            One retrieved source provides information
+                            inconsistent with the generated claim.
+                        </p>
+
+                        <div class="evidence-meta">
+                            <span>Conflict Level: Medium</span>
+                            <span>Action: Additional verification</span>
+                            <span class="warning-badge">⚠ Review</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- VERIFICATION -->
+
+        <section id="verification" class="page-section">
+
+            <div class="section-intro">
+                <h2>Verification Center</h2>
+                <p>Independent checks performed before accepting an output.</p>
+            </div>
+
+            <div class="verification-grid">
+
+                <div class="verification-card">
+                    <div class="check-icon">✓</div>
+                    <h3>Fact Check</h3>
+                    <strong>94%</strong>
+                    <p>Claims supported by evidence</p>
+                </div>
+
+                <div class="verification-card">
+                    <div class="check-icon">✓</div>
+                    <h3>Logic Check</h3>
+                    <strong>91%</strong>
+                    <p>Logical consistency detected</p>
+                </div>
+
+                <div class="verification-card">
+                    <div class="check-icon">✓</div>
+                    <h3>Computation</h3>
+                    <strong>100%</strong>
+                    <p>Independent execution passed</p>
+                </div>
+
+                <div class="verification-card warning">
+                    <div class="check-icon">!</div>
+                    <h3>Risk Detection</h3>
+                    <strong>Low Risk</strong>
+                    <p>No critical unsafe action detected</p>
+                </div>
+
+            </div>
+
+
+            <div class="decision-card">
+
+                <div>
+                    <span class="decision-label">FINAL DECISION</span>
+                    <h2 id="decisionText">✓ ACCEPTED</h2>
+                    <p>
+                        Evidence is sufficient and independent verification
+                        checks have passed.
+                    </p>
+                </div>
+
+                <div class="decision-score">
+                    <strong>93%</strong>
+                    <span>Confidence</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- AUDIT -->
+
+        <section id="audit" class="page-section">
+
+            <div class="section-intro">
+                <h2>Audit & Revision History</h2>
+                <p>Complete trace of agent decisions and verification events.</p>
+            </div>
+
+            <div class="audit-table">
+
+                <div class="table-header">
+                    <span>Agent</span>
+                    <span>Action</span>
+                    <span>Status</span>
+                    <span>Time</span>
+                </div>
+
+                <div class="table-row">
+                    <span>Planner Agent</span>
+                    <span>Task decomposed</span>
+                    <span class="success-text">Completed</span>
+                    <span>10:21:02</span>
+                </div>
+
+                <div class="table-row">
+                    <span>Research Agent</span>
+                    <span>Evidence retrieved</span>
+                    <span class="success-text">Completed</span>
+                    <span>10:21:06</span>
+                </div>
+
+                <div class="table-row">
+                    <span>Generator Agent</span>
+                    <span>Initial answer generated</span>
+                    <span class="success-text">Completed</span>
+                    <span>10:21:09</span>
+                </div>
+
+                <div class="table-row">
+                    <span>Verifier Agent</span>
+                    <span>Independent verification</span>
+                    <span class="success-text">Passed</span>
+                    <span>10:21:14</span>
+                </div>
+
+                <div class="table-row">
+                    <span>Critic Agent</span>
+                    <span>Contradiction analysis</span>
+                    <span class="warning-text">Review</span>
+                    <span>10:21:17</span>
+                </div>
+
+                <div class="table-row">
+                    <span>Finalizer Agent</span>
+                    <span>Final decision</span>
+                    <span class="success-text">Accepted</span>
+                    <span>10:21:20</span>
+                </div>
+
+            </div>
+
+
+            <div class="passport">
+
+                <div class="passport-title">
+                    <span>🛡️</span>
+                    <div>
+                        <h3>Verification Passport</h3>
+                        <p>Task verification summary</p>
+                    </div>
+                </div>
+
+                <div class="passport-grid">
+
+                    <div>
+                        <span>Claims Checked</span>
+                        <strong>12</strong>
+                    </div>
+
+                    <div>
+                        <span>Evidence Sources</span>
+                        <strong>7</strong>
+                    </div>
+
+                    <div>
+                        <span>Contradictions</span>
+                        <strong>1</strong>
+                    </div>
+
+                    <div>
+                        <span>Corrections</span>
+                        <strong>2</strong>
+                    </div>
+
+                    <div>
+                        <span>Tool Tests</span>
+                        <strong>4</strong>
+                    </div>
+
+                    <div>
+                        <span>Final Score</span>
+                        <strong>93%</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <div id="toast" class="toast">
+        Verification started...
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
+```
