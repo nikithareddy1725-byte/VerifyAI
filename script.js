@@ -343,13 +343,12 @@ window.executeVerification = async function() {
         `;
     }
 
-    // Try backend API first with 3.5s timeout
+    // Try backend API first (prioritize relative /api/verify in production/Vercel)
     let data = null;
-    const endpoints = [
-        "http://localhost:8000/api/verify",
-        "http://127.0.0.1:8000/api/verify",
-        "/api/verify"
-    ];
+    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    const endpoints = isLocal
+        ? ["http://127.0.0.1:8000/api/verify", "http://localhost:8000/api/verify", "/api/verify"]
+        : ["/api/verify", "http://127.0.0.1:8000/api/verify"];
 
     for (const url of endpoints) {
         try {
